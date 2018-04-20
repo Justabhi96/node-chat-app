@@ -56,10 +56,13 @@ io.on('connection',(socket) => {
     });
 
     socket.on('createMsg',(newMsg,callback) => {        
+        var user = users.getUser(socket.id);
         //this method emits the event for all the users including 
         //the one emiting the event 
-        io.emit('newMsg',generateMsg(newMsg.from,newMsg.text));
-
+        //io.emit('newMsg',generateMsg(newMsg.from,newMsg.text));
+        if(user && isString(newMsg.text)){
+            io.to(user.room).emit('newMsg',generateMsg(user.name,newMsg.text));
+        }
         callback();
 
         //this method will broadcast the event to all the users 
@@ -67,8 +70,11 @@ io.on('connection',(socket) => {
         //socket.broadcast.emit('newMsg',generateMsg(newMsg.from,newMsg.text));
     });
     socket.on('createLocationMsg', (coords) => {
-        io.emit('newLocationMsg',generateLocationMsg('User',
+        var user = users.getUser(socket.id);
+        if(user){
+            io.to(user.room).emit('newLocationMsg',generateLocationMsg(user.name,
             coords.latitude,coords.longitude));
+        }
     });
 });
 

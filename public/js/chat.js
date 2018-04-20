@@ -80,7 +80,6 @@ socket.on('updateUserList',function(users){
 $('#message-form').on('submit',(e) => {
     e.preventDefault();
     socket.emit('createMsg',{
-        from: 'User',
         text: $('[name=message]').val()
     },function() {
         $('[name=message]').val('');
