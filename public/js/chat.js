@@ -15,6 +15,17 @@ function scrollToBottom() {
 }
 socket.on('connect', function() {
     console.log('connected to server');
+    //deparam is not a function on jquery library. it is available
+    //by adding a deparam.js file in chat.html
+    var params = $.deparam(window.location.search);
+    socket.emit('join',params, function(err) {
+        if(err){
+            alert(err);
+            window.location.href = '/';
+        }else{
+            console.log('no error');
+        }
+    });
     // socket.emit('createMsg',{
     //     from: 'Saurabh',
     //     text: "All is well"
@@ -58,6 +69,13 @@ socket.on('newLocationMsg', function (msg) {
     // a.attr('href',msg.url);
     // li.append(a);
     //$('#message-list').append(li);
+});
+socket.on('updateUserList',function(users){
+    var ol = $('<ol></ol>');
+    users.forEach(function(user){
+        ol.append($('<li></li>').text(user));
+    });
+    $("#users").html(ol);
 });
 $('#message-form').on('submit',(e) => {
     e.preventDefault();

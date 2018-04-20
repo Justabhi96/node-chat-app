@@ -4,8 +4,9 @@ const http = require('http');
 const socketIO = require('socket.io');
 
 const {generateMsg,generateLocationMsg} = require('./utils/message');
-
+const {isString} = require('./utils/validation');
 const publicPath = path.join(__dirname,'../public');
+const {Users} = require('./utils/users');
 
 var app = express();
 
@@ -16,17 +17,19 @@ var server = http.createServer(app);
 
 var io = socketIO(server);
 
+var users = new Users();
+
 app.use(express.static(publicPath));
 
 io.on('connection',(socket) => {
     console.log("New user connected");
 
-    socket.emit('newMsg', generateMsg('admin','Welcome to chat app'));
-    socket.broadcast.emit('newMsg',
-        generateMsg('admin','New User joined'));
-
     socket.on('disconnect',() => {
-        console.log("disconnected from client");
+        var user = users.removeUser(socket.id);
+        if(user){
+            io.to(user.room).emit('updateUserList', users.getUsersList(user.room));
+            io.to(user.room).emit('newMsg',generateMsg('Admin', `${user.name} has left`));
+        }
     });
     
     //this is used to emit an event to a single connection
@@ -34,6 +37,24 @@ io.on('connection',(socket) => {
     //existing connections
     // socket.emit('newMsg',generateMsg('abhishek','what's up));
     
+    socket.on('join',(params,callback) => {
+        if(!isString(params.name) || !isString(params.room)){
+            return callback('Inputs are not valid');
+        }
+        socket.join(params.room);
+        //socket.leave(params.room);
+        
+        users.addUser(socket.id, params.name, params.room);
+        io.to(params.room).emit('updateUserList',users.getUsersList(params.room));
+        //below method is for users in the same group
+        //io.to(params.room).emit();
+        
+        socket.emit('newMsg', generateMsg('admin','Welcome to chat app'));
+        socket.broadcast.to(params.room).emit('newMsg',
+        generateMsg('admin',`${params.name} has joined`));
+        callback();
+    });
+
     socket.on('createMsg',(newMsg,callback) => {        
         //this method emits the event for all the users including 
         //the one emiting the event 
