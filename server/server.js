@@ -38,12 +38,22 @@ io.on('connection',(socket) => {
     // socket.emit('newMsg',generateMsg('abhishek','what's up));
     
     socket.on('join',(params,callback) => {
+        var re = true;
+        users.users.map((user) => {
+            if(user.name.toLowerCase() === params.name.toLowerCase() && user.room === params.room){
+                re=false;
+            }
+        });
+        if(re === false){
+            return callback('Username is already taken');
+        }
         if(!isString(params.name) || !isString(params.room)){
             return callback('Inputs are not valid');
         }
+        
         socket.join(params.room);
         //socket.leave(params.room);
-        
+
         users.addUser(socket.id, params.name, params.room);
         io.to(params.room).emit('updateUserList',users.getUsersList(params.room));
         //below method is for users in the same group
