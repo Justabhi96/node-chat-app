@@ -30,6 +30,7 @@ io.on('connection',(socket) => {
             io.to(user.room).emit('updateUserList', users.getUsersList(user.room));
             io.to(user.room).emit('newMsg',generateMsg('Admin', `${user.name} has left`));
         }
+        console.log('one user disconnected');
     });
     
     //this is used to emit an event to a single connection
@@ -67,9 +68,11 @@ io.on('connection',(socket) => {
 
     socket.on('createMsg',(newMsg,callback) => {        
         var user = users.getUser(socket.id);
+
         //this method emits the event for all the users including 
         //the one emiting the event 
         //io.emit('newMsg',generateMsg(newMsg.from,newMsg.text));
+
         if(user && isString(newMsg.text)){
             io.to(user.room).emit('newMsg',generateMsg(user.name,newMsg.text));
         }
@@ -85,6 +88,15 @@ io.on('connection',(socket) => {
             io.to(user.room).emit('newLocationMsg',generateLocationMsg(user.name,
             coords.latitude,coords.longitude));
         }
+    });
+    socket.on('validatedUser',(params,callback) => {
+        var valid = true;
+        users.users.map((user) => {
+            if(user.name.toLowerCase() === params.name.toLowerCase() && user.room === params.room){
+                valid=false;
+            }
+        });
+        callback(valid);
     });
 });
 

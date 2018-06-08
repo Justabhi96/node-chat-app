@@ -65,9 +65,28 @@ button:disabled{
     display:block;
     margin-bottom:7px
 }
-.form-field input,.form-field select{
+.form-field input{
     border:1px solid #e1e1e1;
     padding:10px
+}
+.form-field input.valid{
+    border:1px solid #15ff00;
+    padding:10px
+}
+.form-field input.notValid{
+    border:2px solid #ff0000;
+    padding:10px
+}
+.form-field select{
+    border:2px solid #e1e1e1;
+    padding:10px
+}
+.form-field p.errShow{
+    display: block;
+    color: red;
+}
+.form-field p.errHide{
+    display: none;
 }
 .chat{
     display:flex

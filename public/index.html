@@ -1,13 +1,15 @@
 <DOCTYPE html>
-<html>
+    <html>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-    <title>Join| Chat App</title>
-    <link rel="stylesheet" href="/css/styles.css" />
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+        <title>Join| Chat App</title>
+        <link rel="stylesheet" href="/css/styles.css" />
+        <script src="/libs/jquery-3.3.1.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
     </head>
-    
+
     <body class="centered-form">
         <div class="centered-form__form">
             <form action="/chat.html">
@@ -16,21 +18,82 @@
                 </div>
                 <div class="form-field">
                     <label>Display name</label>
-                    <input type="text" name="name" autofocus/>
+                    <input type="text" name="name" id='userName' class="valid" autofocus/>
+                    <p id='validationInfo' class="errHide">Username is already taken</p>
                 </div>
                 <div class="form-field">
-                        <label>Room name</label>
-                        <select name="room" id='roomOptions'>
-                            <option></option>
-                            <option>home</option>
-                            <option>office</option>
-                        </select>
+                    <label>Room name</label>
+                    <select name="room" id='roomOptions'>
+                        <option selected>home</option>
+                        <option>office</option>
+                    </select>
                 </div>
                 <div class="form-field">
-                    <button>Join</button>
+                    <button id="joinBtn">Join</button>
                 </div>
             </form>
         </div>
+        <script type='text/javascript'>
+            var socket = io();
+            
+            // This is for timeout in hiting the server while typing
+            // in the name input box 
+            var delay = (function () {
+                var timer = 0;
+                return function (callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+            $(document).ready(function () {
+                $("#userName").on('keyup', function () {
+                    delay(function () {
+                        var param = {};
+                        param.name = $("#userName").val();
+                        param.room = $("#roomOptions option:selected").val();
+                        socket.emit('validatedUser', param, function (val) {
+                            console.log(val);
+                            if (val === true) {
+                                //on username, notvalid class is already applied, so this code will
+                                //remove notvalid class and applies valid class
+                                $("#userName").removeClass('notValid').addClass('valid');
+                                $("#validationInfo").removeClass('errShow').addClass('errHide');
+                            }
+                            else {
+                                //this will remove valid class and applies notValid class
+                                $("#userName").removeClass('valid').addClass('notValid');
+                                $("#validationInfo").removeClass('errHide').addClass('errShow');
+                            }
+                        })
+                    }, 300);
+                });
+                $("#roomOptions").change(function () {
+                    delay(function () {
+                        var param = {};
+                        param.name = $("#userName").val();
+                        param.room = $("#roomOptions option:selected").val();
+                        socket.emit('validatedUser', param, function (val) {
+                            console.log(val);
+                            if (val === true) {
+                                //on username notvalid class is already applied so this code will
+                                //remove notvalid class and applies valid class
+                                $("#userName").removeClass('notValid').addClass('valid');
+                                $("#validationInfo").removeClass('errShow').addClass('errHide');
+                            }
+                            else {
+                                //this will remove valid class and applies notValid class
+                                $("#userName").removeClass('valid').addClass('notValid');
+                                $("#validationInfo").removeClass('errHide').addClass('errShow');
+                            }
+                        })
+                    }, 300);
+                });
+                $("#joinBtn").click(function () {
+                    socket.close();
+                });
+            });
+
+        </script>
     </body>
 
-</html>
+    </html>
