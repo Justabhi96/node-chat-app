@@ -27,7 +27,7 @@
                         
                     />
                     <a class="fileUpload"><i class="fas fa-paperclip"></i></a>
-                    <input type="file" style="display:none"/>
+                    <input type="file" style="display:none" accept="image/jpeg,image/png,image/jpg"/>
                     <button>send</button>
                 </form>
                 <button id="location">Send Location</button>
@@ -42,6 +42,7 @@
                 </div>
                 <div class="message__body">
                     <p>{{text}}</p>
+                    <img src={{image}} height='100' width='100' style='display:{{showImage}}'/>
                 </div>
             </li>
         </script>

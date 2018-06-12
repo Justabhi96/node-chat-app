@@ -1,4 +1,6 @@
 var socket = io();
+let selectedImage = null;
+
 function scrollToBottom() {
     var messages = $("#message-list");
     var newMessage = messages.children('li:last-child');
@@ -47,7 +49,9 @@ socket.on('newMsg', function(msg, user) {
     var html = Mustache.render(template,{
         text: msg.text,
         from: msg.from,
-        createdAt: formattedTime
+        createdAt: formattedTime,
+        image: null,
+        showImage: 'none'
     });
      $('#message-list').append(html);
      scrollToBottom()
@@ -82,15 +86,49 @@ socket.on('updateUserList',function(users){
     });
     $("#users").html(ol);
 });
-$('#message-form').on('submit',(e) => {
-    var myFile = $('[type=file]').prop('files')[0];
-    console.log(myFile);
-    e.preventDefault();
-    socket.emit('createMsg',{
-        text: $('[name=message]').val()
-    },function() {
-        $('[name=message]').val('');
+
+socket.on('showTypingMsg', function(typingUsers){
+    $("#typingUserName").html('');
+     typingUsers.map((username) => {
+         $("#typingUserName").append(`<span> ${username} is typing... </span>`);
+     });
+});
+
+socket.on('newMsgWithImage', function(msg, image) {
+    var formattedTime = moment(msg.createdAt).format('h:mm a');
+    //below commented part was done by jquery and now it is being done
+    //using 'mustache.js'
+    var template = $("#message-template").html();
+    var html = Mustache.render(template,{
+        text: msg.text,
+        from: msg.from,
+        createdAt: formattedTime,
+        image: image,
+        showImage: 'block'
     });
+     $('#message-list').append(html);
+     scrollToBottom()
+    // console.log("New Message: ",msg);
+    // var li = $('<li></li>');
+    // li.text(`${msg.from} ${formattedTime}: ${msg.text}`);
+    // $('#message-list').append(li);
+});
+
+$('#message-form').on('submit',(e) => {
+    // var myFile = $('[type=file]').prop('files')[0];
+    // console.log(myFile);
+    var textMsg = $('[name=message]').val();
+    e.preventDefault();
+    if(textMsg){
+        socket.emit('createMsg', {
+            text: textMsg,
+            image: selectedImage
+        }, function () {
+            $('[name=message]').val('');
+            $('[name=message]').select();
+            socket.emit('stoppedTyping',socket.id);
+        });
+    }
 });
 var locationBtn = $('#location')
 locationBtn.on('click', function(e) {
@@ -120,14 +158,17 @@ $(document).ready(function(){
         }
     });
 });
-
-socket.on('showTypingMsg', function(typingUsers){
-    $("#typingUserName").html('');
-     typingUsers.map((username) => {
-         $("#typingUserName").append(`<span> ${username} is typing... </span>`);
-     });
-});
-
 $(".fileUpload").click(function(){
     $('[type=file]').trigger('click');
+});
+$('[type=file]').on('change',function(){
+    if (this.files && this.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            selectedImage = e.target.result;
+        };
+
+        reader.readAsDataURL(this.files[0]);
+    }
 });

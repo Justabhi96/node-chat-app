@@ -197,3 +197,6 @@ button:disabled{
     padding: 9px 0px;
     cursor: pointer;
 }
+.message__body p{
+    margin-bottom: 10px;
+}

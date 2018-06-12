@@ -21,9 +21,16 @@ var users = new Users();
 var typingUsers = [];
 app.use(express.static(publicPath));
 
+//This is for not showing the error in the console of users that it is trying to get the 
+//data from path "localhost://height='100'" which is not declared.
+app.get("/height='100'",(req,res) => {
+    res.status(200).end();
+});
+
 io.on('connection',(socket) => {
     console.log("New user connected");
 
+    //When user is disconnected
     socket.on('disconnect',() => {
         var user = users.removeUser(socket.id);
         typingUsers =  typingUsers.filter(name => user.name !== name);
@@ -40,9 +47,13 @@ io.on('connection',(socket) => {
     //existing connections
     // socket.emit('newMsg',generateMsg('abhishek','what's up));
     
+    //For joining a specific room
     socket.on('join',(params,callback) => {
         var re = true;
         let name = params.name.charAt(0).toUpperCase() + params.name.slice(1).toLowerCase();
+        
+        //For checking whether username for the specific room 
+        //is already taken or not while typing the name 
         users.users.map((user) => {
             if(user.name.toLowerCase() === params.name.toLowerCase() && user.room === params.room){
                 re=false;
@@ -63,10 +74,9 @@ io.on('connection',(socket) => {
         //below method is for users in the same group
         //io.to(params.room).emit();
         
-        socket.emit('newMsg', generateMsg('admin','Welcome to chat app'),users.getUser(socket.id));
+        socket.emit('newMsg', generateMsg('Admin','Welcome to chat app'),users.getUser(socket.id));
         socket.emit('showTypingMsg', typingUsers);
-        socket.broadcast.to(params.room).emit('newMsg',
-        generateMsg('admin',`${params.name} has joined`));
+        socket.broadcast.to(params.room).emit('newMsg', generateMsg('Admin',`${name} has joined`));
         callback();
     });
 
@@ -77,7 +87,12 @@ io.on('connection',(socket) => {
         //the one emiting the event 
         //io.emit('newMsg',generateMsg(newMsg.from,newMsg.text));
 
-        if(user && isString(newMsg.text)){
+        if(user && isString(newMsg.text) && newMsg.image!==null){
+            //When an image is selected
+            io.to(user.room).emit('newMsgWithImage',generateMsg(user.name,newMsg.text),newMsg.image);
+        }
+        else{
+            //When no image is selected only text is there in msg
             io.to(user.room).emit('newMsg',generateMsg(user.name,newMsg.text));
         }
         callback();
