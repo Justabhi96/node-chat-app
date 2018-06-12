@@ -6,18 +6,28 @@
         <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
         <title>Chat| Chat App</title>
         <link rel="stylesheet" href="/css/styles.css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
     </head>
-    
+
     <body class="chat">
         <div class="chat__sidebar">
             <h3>People</h3>
             <div id="users"></div>
         </div>
         <div class="chat__main">
+            <div class="chat_header">
+                <p class="room_name" id="roomName"></p>
+                <div class="typing_user" id="typingUserName"></div>
+            </div>
             <ol id="message-list" class="chat__messages"></ol>
             <div class="chat__footer">
                 <form id="message-form">
-                    <input autofocus autocomplete="off" name="message" type="text" placeholder="type your message" />
+                    <input autofocus autocomplete="off" id="messageInputBox"
+                        name="message" type="text" placeholder="type your message" 
+                        
+                    />
+                    <a class="fileUpload"><i class="fas fa-paperclip"></i></a>
+                    <input type="file" style="display:none"/>
                     <button>send</button>
                 </form>
                 <button id="location">Send Location</button>
@@ -50,7 +60,7 @@
                 </div>
             </li>
         </script>
-        
+
         <script src="/socket.io/socket.io.js"></script>
         <script src="/js/moment.js"></script>
         <script src="/libs/mustache.js"></script>

@@ -23,7 +23,7 @@ socket.on('connect', function() {
             alert(err);
             window.location.href = '/';
         }else{
-            console.log('no error');
+
         }
     });
     // socket.emit('createMsg',{
@@ -34,7 +34,12 @@ socket.on('connect', function() {
 socket.on('disconnect', function() {
     console.log("disconnected from server");
 });
-socket.on('newMsg', function(msg) {
+socket.on('newMsg', function(msg, user) {
+    if(user != undefined){
+        let name = user.name.charAt(0).toUpperCase() + user.name.slice(1).toLowerCase();
+        let room = user.room.charAt(0).toUpperCase() + user.room.slice(1).toLowerCase();
+        $("#roomName").html(`${name} from ${room}`);
+    }
     var formattedTime = moment(msg.createdAt).format('h:mm a');
     //below commented part was done by jquery and now it is being done
     //using 'mustache.js'
@@ -78,6 +83,8 @@ socket.on('updateUserList',function(users){
     $("#users").html(ol);
 });
 $('#message-form').on('submit',(e) => {
+    var myFile = $('[type=file]').prop('files')[0];
+    console.log(myFile);
     e.preventDefault();
     socket.emit('createMsg',{
         text: $('[name=message]').val()
@@ -100,5 +107,27 @@ locationBtn.on('click', function(e) {
     },function(){
         locationBtn.removeAttr('disabled').text('Send Location');
         alert('Unable to fetch location');
-    })
+    });
+});
+
+$(document).ready(function(){
+    $("#messageInputBox").on('keyup', function(){
+        if($("#messageInputBox").val()){
+            socket.emit('typingUser', socket.id);
+        }
+        else{
+            socket.emit('stoppedTyping',socket.id);
+        }
+    });
+});
+
+socket.on('showTypingMsg', function(typingUsers){
+    $("#typingUserName").html('');
+     typingUsers.map((username) => {
+         $("#typingUserName").append(`<span> ${username} is typing... </span>`);
+     });
+});
+
+$(".fileUpload").click(function(){
+    $('[type=file]').trigger('click');
 });

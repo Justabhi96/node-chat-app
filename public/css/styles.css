@@ -173,3 +173,27 @@ button:disabled{
         margin-right:0
     }
 }
+
+.chat_header{
+    background-color: #2f5a81;
+    height: 80px;
+    width: 100%;
+}
+.room_name{
+    font-size: 20px;
+    font-weight: 400;
+    padding-left: 10px;
+    color: #fff;
+    margin: 10px 0px;
+}
+.typing_user{
+    padding-left: 10px;
+    color: #fff;
+}
+.typing_user span{
+    margin: 0px 10px;
+}
+.chat__main .fileUpload{
+    padding: 9px 0px;
+    cursor: pointer;
+}

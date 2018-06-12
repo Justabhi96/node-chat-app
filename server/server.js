@@ -18,7 +18,7 @@ var server = http.createServer(app);
 var io = socketIO(server);
 
 var users = new Users();
-
+var typingUsers = [];
 app.use(express.static(publicPath));
 
 io.on('connection',(socket) => {
@@ -26,7 +26,9 @@ io.on('connection',(socket) => {
 
     socket.on('disconnect',() => {
         var user = users.removeUser(socket.id);
+        typingUsers =  typingUsers.filter(name => user.name !== name);
         if(user){
+            io.to(user.room).emit('showTypingMsg', typingUsers);
             io.to(user.room).emit('updateUserList', users.getUsersList(user.room));
             io.to(user.room).emit('newMsg',generateMsg('Admin', `${user.name} has left`));
         }
@@ -40,6 +42,7 @@ io.on('connection',(socket) => {
     
     socket.on('join',(params,callback) => {
         var re = true;
+        let name = params.name.charAt(0).toUpperCase() + params.name.slice(1).toLowerCase();
         users.users.map((user) => {
             if(user.name.toLowerCase() === params.name.toLowerCase() && user.room === params.room){
                 re=false;
@@ -55,12 +58,13 @@ io.on('connection',(socket) => {
         socket.join(params.room);
         //socket.leave(params.room);
 
-        users.addUser(socket.id, params.name, params.room);
+        users.addUser(socket.id, name, params.room);
         io.to(params.room).emit('updateUserList',users.getUsersList(params.room));
         //below method is for users in the same group
         //io.to(params.room).emit();
         
-        socket.emit('newMsg', generateMsg('admin','Welcome to chat app'));
+        socket.emit('newMsg', generateMsg('admin','Welcome to chat app'),users.getUser(socket.id));
+        socket.emit('showTypingMsg', typingUsers);
         socket.broadcast.to(params.room).emit('newMsg',
         generateMsg('admin',`${params.name} has joined`));
         callback();
@@ -97,6 +101,18 @@ io.on('connection',(socket) => {
             }
         });
         callback(valid);
+    });
+    socket.on('typingUser',(typingUserID) => {
+       var user = users.getUser(socket.id);
+       if(typingUsers.indexOf(user.name) === -1){
+            typingUsers.push(user.name);
+            io.to(user.room).emit('showTypingMsg', typingUsers);
+       }
+    });
+    socket.on('stoppedTyping', () => {
+        var user = users.getUser(socket.id);
+        typingUsers =  typingUsers.filter(name => user.name !== name);
+        io.to(user.room).emit('showTypingMsg', typingUsers);
     });
 });
 
