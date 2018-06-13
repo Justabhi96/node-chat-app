@@ -119,7 +119,7 @@ $('#message-form').on('submit',(e) => {
     // console.log(myFile);
     var textMsg = $('[name=message]').val();
     e.preventDefault();
-    if(textMsg){
+    if(textMsg || selectedImage){
         socket.emit('createMsg', {
             text: textMsg,
             image: selectedImage
@@ -158,18 +158,31 @@ $(document).ready(function(){
             socket.emit('stoppedTyping',socket.id);
         }
     });
-});
-$(".fileUpload").click(function(){
-    $('[type=file]').trigger('click');
-});
-$('[type=file]').on('change',function(){
-    if (this.files && this.files[0]) {
-        var reader = new FileReader();
 
-        reader.onload = function (e) {
-            selectedImage = e.target.result;
-        };
-
-        reader.readAsDataURL(this.files[0]);
-    }
+    $(".fileUpload").click(function(){
+        $('[type=file]').trigger('click');
+    });
+    $('[type=file]').on('change',function(){
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+    
+            reader.onload = function (e) {
+                selectedImage = e.target.result;
+            };
+    
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
 });
+
+function openModal(e){
+    var modalImg = $("#img01");
+        $('#myModal').css('display','block');
+        $("#img01").attr('src',e.src);
+        
+}
+function closeModal(){ 
+    $('#myModal').css('display','none');
+}
+
+

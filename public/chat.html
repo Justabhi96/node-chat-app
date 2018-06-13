@@ -42,7 +42,12 @@
                 </div>
                 <div class="message__body">
                     <p>{{text}}</p>
-                    <img src={{image}} height='100' width='100' style='display:{{showImage}}'/>
+                    <img id='myImg' src={{image}} height='100' width='100' onclick='openModal(this)' 
+                        style='display:{{showImage}}'/>
+                    <div id="myModal" class="modal">
+                        <span class="close" onclick='closeModal(this)'>&times;</span>
+                        <img class="modal-content" id="img01"/>
+                    </div>
                 </div>
             </li>
         </script>
