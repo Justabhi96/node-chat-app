@@ -127,6 +127,7 @@ $('#message-form').on('submit',(e) => {
             $('[name=message]').val('');
             $('[name=message]').select();
             socket.emit('stoppedTyping',socket.id);
+            selectedImage = null;
         });
     }
 });
