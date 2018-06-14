@@ -1,5 +1,6 @@
 var socket = io();
 let selectedImage = null;
+let selectedEmoji = null;
 
 function scrollToBottom() {
     var messages = $("#message-list");
@@ -94,19 +95,34 @@ socket.on('showTypingMsg', function(typingUsers){
      });
 });
 
-socket.on('newMsgWithImage', function(msg, image) {
+socket.on('newMsgWithImage', function(msg, image, emojisrc) {
     var formattedTime = moment(msg.createdAt).format('h:mm a');
     //below commented part was done by jquery and now it is being done
     //using 'mustache.js'
     var template = $("#message-template").html();
-    var html = Mustache.render(template,{
-        text: msg.text,
-        from: msg.from,
-        createdAt: formattedTime,
-        image: image,
-        showImage: 'block'
-    });
-     $('#message-list').append(html);
+    if(image !== null){
+        var html = Mustache.render(template, {
+            text: msg.text,
+            from: msg.from,
+            createdAt: formattedTime,
+            image: image,
+            showImage: 'block'
+        });
+    }
+    else{
+        var html = Mustache.render(template, {
+            text: msg.text,
+            from: msg.from,
+            createdAt: formattedTime,
+            image: image,
+            showImage: 'none'
+        });
+    }
+    $('#message-list').append(html);
+    if (emojisrc !== null) {
+        $(".message:last-child .message__body p").append(`<span><img src="${emojisrc}"/></span>`);
+        $("#firstEmoji").css('display','none');
+    }
      scrollToBottom()
     // console.log("New Message: ",msg);
     // var li = $('<li></li>');
@@ -119,15 +135,17 @@ $('#message-form').on('submit',(e) => {
     // console.log(myFile);
     var textMsg = $('[name=message]').val();
     e.preventDefault();
-    if(textMsg || selectedImage){
+    if(textMsg || selectedImage || selectedEmoji){
         socket.emit('createMsg', {
             text: textMsg,
-            image: selectedImage
+            image: selectedImage,
+            emojisrc: selectedEmoji
         }, function () {
             $('[name=message]').val('');
             $('[name=message]').select();
             socket.emit('stoppedTyping',socket.id);
             selectedImage = null;
+            selectedEmoji = null;
         });
     }
 });
@@ -173,16 +191,28 @@ $(document).ready(function(){
             reader.readAsDataURL(this.files[0]);
         }
     });
+    $(".smiley").click(function(){
+        $(".smileyDiv").css('display','block');
+    });
 });
 
-function openModal(e){
+function openModal(element){
     var modalImg = $("#img01");
-        $('#myModal').css('display','block');
-        $("#img01").attr('src',e.src);
+    $('#myModal').css('display','block');
+    $("#img01").attr('src',element.src);
         
 }
 function closeModal(){ 
     $('#myModal').css('display','none');
 }
+
+function emojiClicked(element){
+    let src = element.src;
+    console.log(src)
+    selectedEmoji = src;
+    $("#firstEmoji").attr('src',src);
+    $("#firstEmoji").css('display','block');
+}
+
 
 

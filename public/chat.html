@@ -20,13 +20,24 @@
                 <div class="typing_user" id="typingUserName"></div>
             </div>
             <ol id="message-list" class="chat__messages"></ol>
+            <div class="smileyDiv">
+                <img src='happy.png' onclick="emojiClicked(this)"/>
+                <img src='sad.png' onclick="emojiClicked(this)"/>
+                <img src='smart.png' onclick="emojiClicked(this)"/>
+                <img src='surprise.png' onclick="emojiClicked(this)"/>
+            </div>
             <div class="chat__footer">
                 <form id="message-form">
                     <input autofocus autocomplete="off" id="messageInputBox"
-                        name="message" type="text" placeholder="type your message" 
-                        
+                    name="message" type="text" placeholder="type your message" 
                     />
-                    <a class="fileUpload"><i class="fas fa-paperclip"></i></a>
+                    <a class="smiley"><span class="far fa-smile" 
+                            style="font-size:20px;"/>
+                    </a>
+                    <img id="firstEmoji" height="20" width="20" style="display:none"/>
+                    <a class="fileUpload">
+                        <i class="fas fa-paperclip" style="font-size:20px;"></i>
+                    </a>
                     <input type="file" style="display:none" accept="image/jpeg,image/png,image/jpg"/>
                     <button>Send</button>
                 </form>

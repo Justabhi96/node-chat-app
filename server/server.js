@@ -87,9 +87,12 @@ io.on('connection',(socket) => {
         //the one emiting the event 
         //io.emit('newMsg',generateMsg(newMsg.from,newMsg.text));
 
-        if(user && isString(newMsg.text) && newMsg.image!==null){
-            //When an image is selected
-            io.to(user.room).emit('newMsgWithImage',generateMsg(user.name,newMsg.text),newMsg.image);
+        if(user && isString(newMsg.text) && (newMsg.image!==null || newMsg.emojisrc)){
+            //When an image or emoji is selected
+            io.to(user.room).emit('newMsgWithImage',
+                    generateMsg(user.name,newMsg.text),
+                    newMsg.image,
+                    newMsg.emojisrc);
         }
         else{
             //When no image is selected only text is there in msg
