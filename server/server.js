@@ -9,7 +9,7 @@ const publicPath = path.join(__dirname,'../public');
 const {Users} = require('./utils/users');
 
 var app = express();
-
+var port = process.env.PORT || 5000;
 //instead of express we are using http to create server since 
 //express also uses http under the hood to create the server
 //and also we want that server instance for socket functions
@@ -134,6 +134,6 @@ io.on('connection',(socket) => {
     });
 });
 
-server.listen(4000, () => {
-    console.log("Server is running on port 4000");
+server.listen(port, () => {
+    console.log("Server is running on port", port);
 });
