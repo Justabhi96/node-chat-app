@@ -20,11 +20,16 @@
                 <div class="typing_user" id="typingUserName"></div>
             </div>
             <ol id="message-list" class="chat__messages"></ol>
-            <div class="smileyDiv">
-                <img src='happy.png' onclick="emojiClicked(this)"/>
-                <img src='sad.png' onclick="emojiClicked(this)"/>
-                <img src='smart.png' onclick="emojiClicked(this)"/>
-                <img src='surprise.png' onclick="emojiClicked(this)"/>
+            <div class="smileyDiv hidden">
+                <div style="flex-basis: 98%">
+                    <img src='happy.png' onclick="emojiClicked(this)"/>
+                    <img src='sad.png' onclick="emojiClicked(this)"/>
+                    <img src='smart.png' onclick="emojiClicked(this)"/>
+                    <img src='surprise.png' onclick="emojiClicked(this)"/>
+                </div>
+                <a id="cancelEmoji">
+                    <i class="fas fa-times-circle" style="font-size:20px;"></i>
+                </a>
             </div>
             <div class="chat__footer">
                 <form id="message-form">
@@ -39,8 +44,8 @@
                         <i class="fas fa-paperclip" style="font-size:20px;"></i>
                     </a>
                     <input type="file" style="display:none" accept="image/jpeg,image/png,image/jpg"/>
-                    <button>Send</button>
                 </form>
+                <button id="send-message-btn">Send</button>
                 <button id="location">Send Location</button>
             </div>
         </div>
