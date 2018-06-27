@@ -146,6 +146,31 @@ $('#message-form').on('submit',(e) => {
             socket.emit('stoppedTyping',socket.id);
             selectedImage = null;
             selectedEmoji = null;
+            if(!$(".smileyDiv").hasClass('hidden')){
+                $(".smileyDiv").toggleClass('hidden');
+            }
+        });
+    }
+});
+$('#send-message-btn').on('click',(e) => {
+    // var myFile = $('[type=file]').prop('files')[0];
+    // console.log(myFile);
+    var textMsg = $('[name=message]').val();
+    //e.preventDefault();
+    if(textMsg || selectedImage || selectedEmoji){
+        socket.emit('createMsg', {
+            text: textMsg,
+            image: selectedImage,
+            emojisrc: selectedEmoji
+        }, function () {
+            $('[name=message]').val('');
+            $('[name=message]').select();
+            socket.emit('stoppedTyping',socket.id);
+            selectedImage = null;
+            selectedEmoji = null;
+            if(!$(".smileyDiv").hasClass('hidden')){
+                $(".smileyDiv").toggleClass('hidden');
+            }
         });
     }
 });
@@ -192,7 +217,8 @@ $(document).ready(function(){
         }
     });
     $(".smiley").click(function(){
-        $(".smileyDiv").css('display','block');
+        $(".smileyDiv").toggleClass('hidden');
+        //$(".smileyDiv").css('display','block');
     });
 });
 
@@ -213,6 +239,10 @@ function emojiClicked(element){
     $("#firstEmoji").attr('src',src);
     $("#firstEmoji").css('display','block');
 }
+$("#cancelEmoji").click(function(){
+    selectedEmoji = null;
+    $("#firstEmoji").css('display','none');
+});
 
 
 
