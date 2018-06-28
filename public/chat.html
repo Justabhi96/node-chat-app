@@ -5,8 +5,10 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
         <title>Chat| Chat App</title>
+        <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"> -->
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="./emoji-support-lib/css/emoji.css" rel="stylesheet">
         <link rel="stylesheet" href="/css/styles.css" />
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
     </head>
 
     <body class="chat">
@@ -20,28 +22,13 @@
                 <div class="typing_user" id="typingUserName"></div>
             </div>
             <ol id="message-list" class="chat__messages"></ol>
-            <div class="smileyDiv hidden">
-                <div style="flex-basis: 98%">
-                    <img src='happy.png' onclick="emojiClicked(this)"/>
-                    <img src='sad.png' onclick="emojiClicked(this)"/>
-                    <img src='smart.png' onclick="emojiClicked(this)"/>
-                    <img src='surprise.png' onclick="emojiClicked(this)"/>
-                </div>
-                <a id="cancelEmoji">
-                    <i class="fas fa-times-circle" style="font-size:20px;"></i>
-                </a>
-            </div>
             <div class="chat__footer">
                 <form id="message-form">
-                    <input autofocus autocomplete="off" id="messageInputBox"
+                    <input data-emojiable="true" autofocus autocomplete="off" id="messageInputBox"
                     name="message" type="text" placeholder="type your message" 
                     />
-                    <a class="smiley"><span class="far fa-smile" 
-                            style="font-size:20px;"/>
-                    </a>
-                    <img id="firstEmoji" height="20" width="20" style="display:none"/>
                     <a class="fileUpload">
-                        <i class="fas fa-paperclip" style="font-size:20px;"></i>
+                        <i class="fa-paperclip" style="font-size:20px;"></i>
                     </a>
                     <input type="file" style="display:none" accept="image/jpeg,image/png,image/jpg"/>
                 </form>
@@ -84,10 +71,28 @@
         </script>
 
         <script src="/socket.io/socket.io.js"></script>
-        <script src="/js/moment.js"></script>
-        <script src="/libs/mustache.js"></script>
-        <script src="/libs/jquery-3.3.1.min.js"></script>
-        <script src="/js/chat.js"></script>
-        <script src='/libs/deparam.js'></script>
+        <script src="./js/moment.js"></script>
+        <script src="./libs/mustache.js"></script>
+        <script src="./libs/jquery-3.3.1.min.js"></script>
+        <script src="./js/chat.js"></script>
+        <script src='./libs/deparam.js'></script>
+        <script src="./emoji-support-lib/js/config.js"></script>
+        <script src="./emoji-support-lib/js/util.js"></script>
+        <script src="./emoji-support-lib/js/jquery.emojiarea.js"></script>
+        <script src="./emoji-support-lib/js/emoji-picker.js"></script>
+        <script>
+            $(function() {
+              // Initializes and creates emoji set from sprite sheet
+              window.emojiPicker = new EmojiPicker({
+                emojiable_selector: '[data-emojiable=true]',
+                assetsPath: '../emoji-support-lib/img/',
+                popupButtonClasses: 'fa fa-smile-o'
+              });
+              // Finds all elements with `emojiable_selector` and converts them to rich emoji input fields
+              // You may want to delay this step if you have dynamically created input fields that appear later in the loading process
+              // It can be called as many times as necessary; previously converted input fields will not be converted again
+              window.emojiPicker.discover();
+            });
+          </script>
     </body>
 </html>

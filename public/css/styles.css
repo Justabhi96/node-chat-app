@@ -318,8 +318,8 @@ button:disabled{
 
 .chat__footer #firstEmoji{
     position: relative;
-    top: 12px;
-    right: 40px;
+    top: -4px;
+    right: -5px;
 } 
 .message__body p img{
     position: relative;
@@ -331,4 +331,44 @@ button:disabled{
 .smileyDiv #cancelEmoji{
     margin: 4px 0px;
     cursor: pointer;
+}
+.smileyDiv .smileyGroup{
+    font-size: 20px;
+}
+
+.chat__footer .notify-badge{
+    position: relative;
+    right:-20px;
+    top:0px;
+    background:blueviolet;
+    text-align: center;
+    border-radius: 30px 30px 30px 30px;
+    color:white;
+    padding:2px 3px 2px 2px;
+    font-size:11px;
+}
+.chat__footer #emojiWithBadge{
+    position: relative;
+    margin-right: -33px;
+    right: 46px;
+}
+.emoji-wysiwyg-editor{
+    width: -webkit-fill-available;
+    border-radius: 7px;
+}
+.emoji-picker-icon{
+    position: relative;
+    right: 33px;
+    top: 10px;
+    height: 20px;
+}
+.emoji-menu{
+    bottom: 0px;
+    right: 30px;
+}
+.emoji-menu .emoji-items{
+    padding-right: 0px;
+}
+.emoji-menu .emoji-items-wrap{
+    width: 100%;
 }

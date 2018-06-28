@@ -130,28 +130,28 @@ socket.on('newMsgWithImage', function(msg, image, emojisrc) {
     // $('#message-list').append(li);
 });
 
-$('#message-form').on('submit',(e) => {
-    // var myFile = $('[type=file]').prop('files')[0];
-    // console.log(myFile);
-    var textMsg = $('[name=message]').val();
-    e.preventDefault();
-    if(textMsg || selectedImage || selectedEmoji){
-        socket.emit('createMsg', {
-            text: textMsg,
-            image: selectedImage,
-            emojisrc: selectedEmoji
-        }, function () {
-            $('[name=message]').val('');
-            $('[name=message]').select();
-            socket.emit('stoppedTyping',socket.id);
-            selectedImage = null;
-            selectedEmoji = null;
-            if(!$(".smileyDiv").hasClass('hidden')){
-                $(".smileyDiv").toggleClass('hidden');
-            }
-        });
-    }
-});
+// $('#message-form').on('submit',(e) => {
+//     // var myFile = $('[type=file]').prop('files')[0];
+//     // console.log(myFile);
+//     var textMsg = $('[name=message]').val();
+//     e.preventDefault();
+//     if(textMsg || selectedImage || selectedEmoji){
+//         socket.emit('createMsg', {
+//             text: textMsg,
+//             image: selectedImage,
+//             emojisrc: selectedEmoji
+//         }, function () {
+//             $('[name=message]').val('');
+//             $('[name=message]').select();
+//             socket.emit('stoppedTyping',socket.id);
+//             selectedImage = null;
+//             selectedEmoji = null;
+//             if(!$(".smileyDiv").hasClass('hidden')){
+//                 $(".smileyDiv").toggleClass('hidden');
+//             }
+//         });
+//     }
+// });
 $('#send-message-btn').on('click',(e) => {
     // var myFile = $('[type=file]').prop('files')[0];
     // console.log(myFile);
@@ -163,14 +163,12 @@ $('#send-message-btn').on('click',(e) => {
             image: selectedImage,
             emojisrc: selectedEmoji
         }, function () {
-            $('[name=message]').val('');
-            $('[name=message]').select();
+            //$('[name=message]').val('');
+            $('.emoji-wysiwyg-editor').html('');
+            $('.emoji-wysiwyg-editor').select();
             socket.emit('stoppedTyping',socket.id);
             selectedImage = null;
             selectedEmoji = null;
-            if(!$(".smileyDiv").hasClass('hidden')){
-                $(".smileyDiv").toggleClass('hidden');
-            }
         });
     }
 });
@@ -216,10 +214,6 @@ $(document).ready(function(){
             reader.readAsDataURL(this.files[0]);
         }
     });
-    $(".smiley").click(function(){
-        $(".smileyDiv").toggleClass('hidden');
-        //$(".smileyDiv").css('display','block');
-    });
 });
 
 function openModal(element){
@@ -232,17 +226,6 @@ function closeModal(){
     $('#myModal').css('display','none');
 }
 
-function emojiClicked(element){
-    let src = element.src;
-    console.log(src)
-    selectedEmoji = src;
-    $("#firstEmoji").attr('src',src);
-    $("#firstEmoji").css('display','block');
-}
-$("#cancelEmoji").click(function(){
-    selectedEmoji = null;
-    $("#firstEmoji").css('display','none');
-});
 
 
 
