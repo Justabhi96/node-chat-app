@@ -50,6 +50,10 @@ io.on('connection',(socket) => {
     //For joining a specific room
     socket.on('join',(params,callback) => {
         var re = true;
+        var exceeded = false;
+        if(users.users.length >9){
+            exceeded = true;
+        }
         let name = params.name.charAt(0).toUpperCase() + params.name.slice(1).toLowerCase();
         
         //For checking whether username for the specific room 
@@ -64,6 +68,9 @@ io.on('connection',(socket) => {
         }
         if(!isString(params.name) || !isString(params.room)){
             return callback('Inputs are not valid');
+        }
+        if(exceeded == true){
+            return callback('Maximum number of users exceeded');
         }
         
         socket.join(params.room);

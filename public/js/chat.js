@@ -54,7 +54,9 @@ socket.on('newMsg', function(msg, user) {
         image: null,
         showImage: 'none'
     });
+    console.log(msg.text);
      $('#message-list').append(html);
+     $(".emoji-picker-with-text:last").html(msg.text);
      scrollToBottom()
     // console.log("New Message: ",msg);
     // var li = $('<li></li>');
@@ -118,6 +120,7 @@ socket.on('newMsgWithImage', function(msg, image, emojisrc) {
             showImage: 'none'
         });
     }
+    
     $('#message-list').append(html);
     if (emojisrc !== null) {
         $(".message:last-child .message__body p").append(`<span><img src="${emojisrc}"/></span>`);
@@ -155,7 +158,9 @@ socket.on('newMsgWithImage', function(msg, image, emojisrc) {
 $('#send-message-btn').on('click',(e) => {
     // var myFile = $('[type=file]').prop('files')[0];
     // console.log(myFile);
-    var textMsg = $('[name=message]').val();
+    //var textMsg = $('[name=message]').val();
+    var textMsg = $('.emoji-wysiwyg-editor').html();
+    console.log(textMsg);
     //e.preventDefault();
     if(textMsg || selectedImage || selectedEmoji){
         socket.emit('createMsg', {
@@ -191,13 +196,19 @@ locationBtn.on('click', function(e) {
 });
 
 $(document).ready(function(){
-    $("#messageInputBox").on('keyup', function(){
-        if($("#messageInputBox").val()){
-            socket.emit('typingUser', socket.id);
+    var msgData = $(".emoji-wysiwyg-editor").html();
+
+    $("body").on('keyup', function(){
+        if(msgData != $(".emoji-wysiwyg-editor").html()){
+            console.log('Typing user');
+            if($(".emoji-wysiwyg-editor").html()){
+                socket.emit('typingUser', socket.id);
+            }
+            else{
+                socket.emit('stoppedTyping',socket.id);
+            }
         }
-        else{
-            socket.emit('stoppedTyping',socket.id);
-        }
+        msgData = $(".emoji-wysiwyg-editor").html();
     });
 
     $(".fileUpload").click(function(){
@@ -213,6 +224,9 @@ $(document).ready(function(){
     
             reader.readAsDataURL(this.files[0]);
         }
+    });
+    $("#sidebarShower").click(function(){
+        $(".chat__sidebar").toggleClass("collapse");
     });
 });
 

@@ -12,12 +12,13 @@
     </head>
 
     <body class="chat">
-        <div class="chat__sidebar">
+        <div class="chat__sidebar collapse">
             <h3>People</h3>
             <div id="users"></div>
         </div>
         <div class="chat__main">
             <div class="chat_header">
+                <span id="sidebarShower" class="fa fa-navicon"></span>
                 <p class="room_name" id="roomName"></p>
                 <div class="typing_user" id="typingUserName"></div>
             </div>
@@ -28,7 +29,7 @@
                     name="message" type="text" placeholder="type your message" 
                     />
                     <a class="fileUpload">
-                        <i class="fa-paperclip" style="font-size:20px;"></i>
+                        <i class="fa fa-paperclip" style="font-size:20px;"></i>
                     </a>
                     <input type="file" style="display:none" accept="image/jpeg,image/png,image/jpg"/>
                 </form>
@@ -44,7 +45,7 @@
                     <span>{{createdAt}}</span>
                 </div>
                 <div class="message__body">
-                    <p>{{text}}</p>
+                    <p class="emoji-picker-with-text"></p>
                     <img id='myImg' src={{image}} height='100' width='100' onclick='openModal(this)' 
                         style='display:{{showImage}}'/>
                     <div id="myModal" class="modal">
